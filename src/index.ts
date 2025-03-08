@@ -6,11 +6,11 @@ import * as path from 'path';
 joplin.plugins.register({
 	onStart: async function() {
 		// eslint-disable-next-line no-console
-		console.info('joplin folder transport plugin started!');
+		console.info('joplin folder mapping plugin started!');
 
         // 注册插件设置
-        await joplin.settings.registerSection('folderTransportSection', {
-            label: 'Folder Transport',
+        await joplin.settings.registerSection('folderMappingSection', {
+            label: 'Folder Mapping',
             iconName: 'fas fa-folder',
         });
 
@@ -18,7 +18,7 @@ joplin.plugins.register({
             'defaultFolderPath': {
                 value: '',
                 type: 2, // String
-                section: 'folderTransportSection',
+                section: 'folderMappingSection',
                 public: true,
                 label: '默认根路径',
                 description: '用于与Joplin笔记本路径拼接为系统完整路径',
@@ -27,12 +27,12 @@ joplin.plugins.register({
 
         // 处理菜单项点击事件
         await joplin.commands.register({
-            name: 'TransportOpen_MenuOfFolder_OpenSystemFolder',
+            name: 'MappingOpen_MenuOfFolder_OpenSystemFolder',
             label: '打开系统目录',
             execute: async () => {
                 const selectedFolder = await joplin.workspace.selectedFolder();
                 if (selectedFolder) {
-                    await joplin.commands.execute('FolderTransport_OpenSystemFolder', selectedFolder);
+                    await joplin.commands.execute('FolderMapping_OpenSystemFolder', selectedFolder);
                 } else {
                     await joplin.views.dialogs.showMessageBox('No notebook selected');
                 }
@@ -41,7 +41,7 @@ joplin.plugins.register({
 
 		// 打开系统文件夹
 		await joplin.commands.register({
-            name: 'FolderTransport_OpenSystemFolder',
+            name: 'FolderMapping_OpenSystemFolder',
             label: '打开系统目录',
             execute: async (selectedFolder: any) => {
 				const folderId = selectedFolder ? selectedFolder.id : null;
@@ -68,6 +68,6 @@ joplin.plugins.register({
         });
 
 		// 注册右键菜单项
-        await joplin.views.menuItems.create('TransportOpen_MenuOfFolder_001', 'TransportOpen_MenuOfFolder_OpenSystemFolder', MenuItemLocation.FolderContextMenu);
+        await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', 'MappingOpen_MenuOfFolder_OpenSystemFolder', MenuItemLocation.FolderContextMenu);
 	},
 });

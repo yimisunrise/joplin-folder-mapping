@@ -1,6 +1,6 @@
 {
     "defaultFolderPathLabel": "Default Folder Path",
-    "defaultFolderPathDescription": "The default folder path to use for folder transport.",
+    "defaultFolderPathDescription": "The default folder path to use for folder mapping.",
     "openSystemFolderLabel": "Open System Folder",
     "noNotebookSelected": "No notebook selected",
     "folderCreated": "Folder created: {path}",
