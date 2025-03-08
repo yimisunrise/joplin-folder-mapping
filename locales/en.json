@@ -1,0 +1,9 @@
+{
+    "defaultFolderPathLabel": "Default Folder Path",
+    "defaultFolderPathDescription": "The default folder path to use for folder transport.",
+    "openSystemFolderLabel": "Open System Folder",
+    "noNotebookSelected": "No notebook selected",
+    "folderCreated": "Folder created: {path}",
+    "folderExists": "Folder already exists: {path}",
+    "folderNotFound": "Folder not found: {path}"
+}

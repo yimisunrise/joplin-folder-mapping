@@ -1,0 +1,9 @@
+{
+    "defaultFolderPathLabel": "默认根路径",
+    "defaultFolderPathDescription": "用于与Joplin笔记本路径拼接为系统完整路径",
+    "openSystemFolderLabel": "打开系统目录",
+    "noNotebookSelected": "未选择笔记本",
+    "folderCreated": "目录已创建: {path}",
+    "folderExists": "目录已存在: {path}",
+    "folderNotFound": "目录未找到: {path}"
+}
