@@ -29,9 +29,14 @@ joplin.plugins.register({
 				const folderId = selectedFolder ? selectedFolder.id : null;
                 if (folderId) {
 					// 通过目录ID获取目录路径
-					const folderPath = FolderUtils.getFolderPath(folderId);
-                    // 在这里添加打开系统文件夹的逻辑
-					console.info('joplin folder transport plugin openFolder !!!!');
+					const folderPath = await FolderUtils.getFolderPath(folderId);
+					// 拼接系统目录路径
+					const fullFolderPath = '/home' + folderPath;
+					console.info('系统完整路径:' + fullFolderPath);
+					// 创建系统目录如果不存在时
+					FolderUtils.createSystemFolderOfNotExist(fullFolderPath)
+					// 打开系统目录
+					FolderUtils.openSystemFolder(fullFolderPath);
                 } else {
                     console.info('No folder ID provided');
                 }
