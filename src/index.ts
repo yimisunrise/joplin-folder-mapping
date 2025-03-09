@@ -35,13 +35,13 @@ joplin.plugins.register({
         await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', FolderMenuItem.OPEN_SYSTEM_FOLDER, MenuItemLocation.FolderContextMenu);
 
         // 创建Tools菜单项
-        await joplin.views.menus.create('MappingOpen_MenuOfFolder_002', 'Folder Mapping', [
-            {
-                commandName: FolderMenuItem.OPEN_SYSTEM_FOLDER,
-            },
-            {
-                commandName: FolderMenuItem.TEST,
-            },
-        ], MenuItemLocation.Tools)
+        // await joplin.views.menus.create('MappingOpen_MenuOfFolder_002', 'Folder Mapping', [
+        //     {
+        //         commandName: FolderMenuItem.OPEN_SYSTEM_FOLDER,
+        //     },
+        //     {
+        //         commandName: FolderMenuItem.TEST,
+        //     },
+        // ], MenuItemLocation.Tools)
 	},
 });
