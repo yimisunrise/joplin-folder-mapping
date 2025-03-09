@@ -20,6 +20,38 @@ export class FolderUtils {
     }
 
     /**
+     * 获取所有目录列表
+     * @returns
+     */
+    static async getFolders() {
+        try {
+            const folders = await joplin.data.get(['folders']);
+            return folders;
+        } catch (error) {
+            console.error('Error fetching folders:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 递归获取目录结构
+     * @param parentId 
+     * @param depth 
+     */
+    static async buildFolderTree(parentId: string = '', depth: number = 0) {
+        const folders = await joplin.data.get(['folders'], {
+          fields: ['id', 'title'],
+          query: { parent_id: parentId },
+        });
+      
+        for (const folder of folders.items) {
+          console.log('  '.repeat(depth) + '📁 ' + folder.title);
+          // 递归子笔记本
+          await this.buildFolderTree(folder.id, depth + 1); 
+        }
+    }
+
+    /**
      * 根据目录ID生成从根至该目录的完整路径字符串，用斜杠分割目录
      * @param folderId - 目录的ID
      * @returns 从根至该目录的完整路径字符串
