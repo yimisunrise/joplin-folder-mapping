@@ -1,8 +1,12 @@
 import joplin from 'api';
 import * as fs from 'fs';
+import * as path from 'path';
 import { exec } from 'child_process';
 
-export class FolderUtils {
+/**
+ * Joplin目录工具类
+ */
+export class JoplinFolderUtils {
 
     /**
      * 根据目录ID获取目录对象
@@ -68,6 +72,61 @@ export class FolderUtils {
 
         return fullPath;
     }
+    
+}
+
+
+/**
+ * 系统工具类
+ */
+export class SystemUtils {
+
+    /**
+     * 获取设置中的默认根路径
+     * @returns 默认根路径
+     */
+    static async getSystemRootPath(){
+        const settings = await joplin.settings.values(['defaultFolderPath']);
+        const defaultFolderPath = settings['defaultFolderPath'] as string;
+        return defaultFolderPath;
+    }
+
+    /**
+     * 获取指定系统目录下的所有子目录（递归）
+     * @param rootPath - 要扫描的根目录路径
+     * @returns 所有子目录路径数组
+     */
+    static async getSystemFolders(rootPath: string): Promise<string[]> {
+        if (!this.pathExists(rootPath)) {
+            return [];
+        }
+        return this.getAllSubFolders(rootPath);
+    }
+
+    /**
+     * 递归获取所有子目录
+     * @param dirPath - 当前目录路径
+     * @param result - 结果数组
+     * @returns 所有子目录路径数组
+     */
+    private static getAllSubFolders(dirPath: string, result: string[] = []): string[] {
+        try {
+            const items = fs.readdirSync(dirPath, { withFileTypes: true });
+            
+            for (const item of items) {
+                if (item.isDirectory()) {
+                    const fullPath = path.join(dirPath, item.name);
+                    result.push(fullPath);
+                    this.getAllSubFolders(fullPath, result); // 递归调用
+                }
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('Error reading system folders:', error);
+            return result;
+        }
+    }
 
     /**
      * 判断操作系统中指定路径是否存在
@@ -76,6 +135,15 @@ export class FolderUtils {
      */
     static pathExists(folderPath: string): boolean {
         return fs.existsSync(folderPath);
+    }
+
+    /**
+     * 判断操作系统中指定文件是否存在
+     * @param filePath - 要检查的文件路径
+     * @returns 如果文件存在则返回true，否则返回false
+     */
+    static fileExists(filePath: string): boolean {
+        return fs.existsSync(filePath);
     }
 
     /**
@@ -114,4 +182,111 @@ export class FolderUtils {
             console.error(`系统目录不存在: ${folderPath}`);
         }
     }
+
+    /**
+     * 获取系统目录的持久化唯一标识符
+     * @param folderPath - 目录路径
+     * @returns 目录的唯一标识符
+     */
+    static async getSystemFolderPersistentId(folderPath: string): Promise<string> {
+        if (!this.pathExists(folderPath)) {
+            throw new Error(`目录不存在: ${folderPath}`);
+        }
+
+        try {
+            const stats = fs.statSync(folderPath);
+            if (!stats.isDirectory()) {
+                throw new Error(`路径不是目录: ${folderPath}`);
+            }
+
+            // 跨平台唯一标识符方案
+            if (process.platform === 'win32') {
+                // Windows系统：使用文件创建时间和大小组合作为唯一标识
+                const birthtime = stats.birthtimeMs || stats.ctimeMs;
+                return `${birthtime}-${stats.size}`;
+            } else if (process.platform === 'darwin') {
+                // macOS系统：使用inode和创建时间组合
+                const birthtime = stats.birthtimeMs || stats.ctimeMs;
+                return `mac-${stats.ino}-${birthtime}`;
+            } else {
+                // Unix/Linux系统：使用inode
+                return `unix-${stats.ino}`;
+            }
+        } catch (error) {
+            console.error('获取目录唯一标识符失败:', error);
+            throw error;
+        }
+    }
+}
+
+/**
+ * 数据工具类
+ */
+export class JoplinDataUtils {
+
+    // 数据文件路径
+    private static dataFileName =  "data.json";
+
+    // 数据对象
+    private static dataObject = undefined;
+
+    /**
+     * 获取数据文件路径
+     * @returns 
+     */
+    static async getDataFilePath(): Promise<string> {
+        // 文件路径
+        return await this.getPluginDataDir() + "/" + this.dataFileName;
+    }
+
+    /**
+     * 获取插件数据目录
+     * @returns 插件数据目录
+     */
+    static async getPluginDataDir(): Promise<string> {
+        const dataDir = await joplin.plugins.dataDir();
+        console.log("dataDir:", dataDir);
+        return dataDir;
+    }
+
+    /**
+     * 读取数据
+     * @param key - 数据键
+     * @returns 数据值
+     */
+    static async readDataByKey(key: string): Promise<any> {
+        return null;
+    }
+
+    /**
+     * 读取JSON数据
+     * @returns 解析后的JSON对象
+     */
+    static async readData(): Promise<any> {
+        try {
+            const filePath = await this.getDataFilePath();
+            if (!SystemUtils.fileExists(filePath)) {
+                return null;
+            }
+            const data = fs.readFileSync(filePath, 'utf8');
+            return JSON.parse(data);
+        } catch (error) {
+            console.error('Error reading data:', error);
+            return null;
+        }
+    }
+
+    /**
+     * 保存JSON数据
+     * @param data - 要保存的JSON对象
+     */
+    static async saveData(data: any): Promise<void> {
+        try {
+            const filePath = await this.getDataFilePath();
+            fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+        } catch (error) {
+            console.error('Error saving data:', error);
+        }
+    }
+
 }
