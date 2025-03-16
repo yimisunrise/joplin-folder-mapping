@@ -13,7 +13,7 @@ For information on how to build or publish the plugin, please see [GENERATOR_DOC
 
 ---
 
-一款在Joplin中将笔记本目录映射至系统中指定根目录下同路径目录的插件，可以实现从Joplin笔记本跳转之系统文件夹，可帮助我们将笔记目录的管理与系统中文件夹的管理进行结合，从而提升工作效率。
+这款专为 Joplin 笔记软件打造的插件，能够将 Joplin 中的笔记本目录精准映射到系统指定根目录下的同路径目录。借助该插件，用户可直接从 Joplin 笔记本跳转至对应的系统文件夹，轻松实现笔记目录管理与系统文件夹管理的深度融合，显著提升工作效率。
 
 ---
 
