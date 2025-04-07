@@ -1,6 +1,6 @@
 import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
-import { FolderMenuRegister, ActionRegister, FolderMenuItem } from './commands';
+import { CommandsRegister, CommandMenuItem } from './commands';
 
 
 joplin.plugins.register({
@@ -25,22 +25,22 @@ joplin.plugins.register({
             },
         });
 
-        // 笔记本右键菜单注册初始化
-        FolderMenuRegister.init();
-
-        // 动作行为事件注册初始化
-        ActionRegister.init();
+        // 命令注册初始化
+        CommandsRegister.init();
 
 		// 创建笔记本右键菜单项
-        await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', FolderMenuItem.OPEN_SYSTEM_FOLDER, MenuItemLocation.FolderContextMenu);
+        await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', CommandMenuItem.OPEN_SYSTEM_FOLDER, MenuItemLocation.FolderContextMenu);
 
         // 创建Tools菜单项
         await joplin.views.menus.create('MappingOpen_MenuOfFolder_002', 'Folder Mapping', [
             {
-                commandName: FolderMenuItem.OPEN_SYSTEM_FOLDER,
+                commandName: CommandMenuItem.OPEN_SYSTEM_FOLDER,
             },
             {
-                commandName: FolderMenuItem.SYNCHRONOUS_DIRECTORY_STRUCTURE,
+                commandName: CommandMenuItem.SYNCHRONOUS_DIRECTORY_STRUCTURE,
+            },
+            {
+                commandName: CommandMenuItem.OPEN_FOLDER_COMPARE,
             },
         ], MenuItemLocation.Tools)
 	},

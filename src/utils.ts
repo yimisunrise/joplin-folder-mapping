@@ -224,11 +224,15 @@ export class SystemUtils {
  */
 export class JoplinDataUtils {
 
-    // 数据文件路径
+    /**
+     * 数据文件路径
+     */
     private static dataFileName =  "data.json";
 
-    // 数据对象
-    private static dataObject = undefined;
+    /**
+     * 数据对象
+     */
+    private static dataObj = undefined;
 
     /**
      * 获取数据文件路径
@@ -262,14 +266,16 @@ export class JoplinDataUtils {
      * 读取JSON数据
      * @returns 解析后的JSON对象
      */
-    static async readData(): Promise<any> {
+    static async getData(): Promise<any> {
         try {
             const filePath = await this.getDataFilePath();
             if (!SystemUtils.fileExists(filePath)) {
                 return null;
             }
             const data = fs.readFileSync(filePath, 'utf8');
-            return JSON.parse(data);
+            // 解析JSON数据
+            this.dataObj = JSON.parse(data);
+            return this.dataObj;
         } catch (error) {
             console.error('Error reading data:', error);
             return null;
@@ -282,6 +288,7 @@ export class JoplinDataUtils {
      */
     static async saveData(data: any): Promise<void> {
         try {
+            this.dataObj = data;
             const filePath = await this.getDataFilePath();
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
         } catch (error) {

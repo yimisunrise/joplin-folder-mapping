@@ -4,26 +4,31 @@ import * as path from 'path';
 
 
 /**
- * 笔记本右键菜单项
+ * 菜单项命令
  */
-export enum FolderMenuItem {
+export enum CommandMenuItem {
 
     /**
      * 打开系统目录
      */
-    OPEN_SYSTEM_FOLDER = "FolderMapping_MenuOfFolder_OpenSystemFolder",
+    OPEN_SYSTEM_FOLDER = "FolderMapping_Menu_OpenSystemFolder",
 
     /**
      * 同步目录结构
      */
-    SYNCHRONOUS_DIRECTORY_STRUCTURE = "FolderMapping_MenuOfFolder_SynchronousDirectoryStructure",
+    SYNCHRONOUS_DIRECTORY_STRUCTURE = "FolderMapping_Menu_SynchronousDirectoryStructure",
+
+    /**
+     * 打开系统目录对比
+     */
+    OPEN_FOLDER_COMPARE = "FolderMapping_Menu_OpenFolderCompare",
 
 }
 
 /**
- * 动作行为命令项
+ * 动作行为命令
  */
-export enum ActionItem {
+export enum CommandActionItem {
 
     /**
      * 打开系统目录
@@ -33,26 +38,30 @@ export enum ActionItem {
 }
 
 /**
- * 笔记本右键菜单项目注册
+ * 命令注册
  */
-export class FolderMenuRegister {
+export class CommandsRegister {
 
     static async init() {
-        this.openSystemFolder();
-        this.synchronousDirectoryStructure();
+        // 注册菜单项
+        this.menuOfOpenSystemFolder();
+        this.menuOfSynchronousDirectoryStructure();
+        this.menuOfOpenFolderCompare();
+        // 注册动作行为
+        this.actionOfOpenSystemFolder();
     }
 
     /**
      * 打开系统目录
      */
-    private static async openSystemFolder() {
+    private static async menuOfOpenSystemFolder() {
         await joplin.commands.register({
-            name: FolderMenuItem.OPEN_SYSTEM_FOLDER,
+            name: CommandMenuItem.OPEN_SYSTEM_FOLDER,
             label: '打开系统目录',
             execute: async () => {
                 const selectedFolder = await joplin.workspace.selectedFolder();
                 if (selectedFolder) {
-                    await joplin.commands.execute(ActionItem.OPEN_SYSTEM_FOLDER, selectedFolder);
+                    await joplin.commands.execute(CommandActionItem.OPEN_SYSTEM_FOLDER, selectedFolder);
                 } else {
                     await joplin.views.dialogs.showMessageBox('No notebook selected');
                 }
@@ -63,9 +72,9 @@ export class FolderMenuRegister {
     /**
      * 同步目录结构
      */
-    private static async synchronousDirectoryStructure() {
+    private static async menuOfSynchronousDirectoryStructure() {
         await joplin.commands.register({
-            name: FolderMenuItem.SYNCHRONOUS_DIRECTORY_STRUCTURE,
+            name: CommandMenuItem.SYNCHRONOUS_DIRECTORY_STRUCTURE,
             label: '同步目录结构',
             execute: async () => {
                 // 数据存储对象
@@ -109,23 +118,33 @@ export class FolderMenuRegister {
         });
     }
 
-}
-
-/**
- * 动作事件注册
- */
-export class ActionRegister {
-
-    static async init() {
-        this.openSystemFolder();
+    /**
+     * 打开系统目录对比
+     */
+    private static async menuOfOpenFolderCompare() {
+        await joplin.commands.register({
+            name: CommandMenuItem.OPEN_FOLDER_COMPARE,
+            label: '打开目录对比',
+            execute: async () => {
+                // 获取数据
+                const folderMappingData = await JoplinDataUtils.getData();
+                console.log("folderMappingData", folderMappingData);
+                // 目录对比
+                folderMappingData["folder_compare"] = [];
+                // 保存数据
+                JoplinDataUtils.saveData(folderMappingData);
+                // 打开目录对比窗口
+                // await joplin.views.dialogs.open('FolderCompareDialog');
+            },
+        });
     }
 
     /**
      * 打开系统文件夹
      */
-    static async openSystemFolder(){
+    static async actionOfOpenSystemFolder(){
         await joplin.commands.register({
-            name: ActionItem.OPEN_SYSTEM_FOLDER,
+            name: CommandActionItem.OPEN_SYSTEM_FOLDER,
             label: '打开系统目录',
             execute: async (selectedFolder: any) => {
                 const folderId = selectedFolder ? selectedFolder.id : null;
@@ -150,4 +169,5 @@ export class ActionRegister {
             },
         });
     }
+
 }
