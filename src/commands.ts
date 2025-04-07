@@ -68,37 +68,43 @@ export class FolderMenuRegister {
             name: FolderMenuItem.SYNCHRONOUS_DIRECTORY_STRUCTURE,
             label: '同步目录结构',
             execute: async () => {
+                // 数据存储对象
+                const folderMappingData = {};
+                // 获取设置中的默认根路径
+                folderMappingData["system_root_path"] = await SystemUtils.getSystemRootPath();
+                folderMappingData["joplin_folders"] = [];
+                folderMappingData["system_folders"] = [];
                 // 获取所有Joplin的目录
                 const folders = await JoplinFolderUtils.getFolders();
-                // 设置系统根目录
-                folders["system_root_path"] = await SystemUtils.getSystemRootPath();
-                // 遍历Joplin目录并填充字段
                 const foldersItems =  folders["items"];
                 if (foldersItems) {
                     for (const index in foldersItems) {
                         try {
                             const item = foldersItems[index];
-                            item["joplin_folder_path"] = await JoplinFolderUtils.getFolderPath(item["id"]);
-                            item["system_folder_exists"] = await SystemUtils.pathExists(folders["system_root_path"] + item["joplin_folder_path"]);
+                            const joplinFolderPath = await JoplinFolderUtils.getFolderPath(item["id"])
+                            folderMappingData["joplin_folders"].push({
+                                "id": item["id"],
+                                "parent_id": item["parent_id"],
+                                "title": item["title"],
+                                "joplin_folder_path": joplinFolderPath,
+                                "system_folder_exists": await SystemUtils.pathExists(folderMappingData["system_root_path"] + joplinFolderPath),
+                            });
                         } catch (error) {
                             console.error('Error:', error);
                         }
                     }
                 }
                 // 获取系统目录列表
-                const systemFolders = await SystemUtils.getSystemFolders(folders["system_root_path"])
-                // 遍历系统目录列表
-                const systemFolderArray = [];
+                const systemFolders = await SystemUtils.getSystemFolders(folderMappingData["system_root_path"])
                 for(const index in systemFolders) {
                     const path = systemFolders[index];
-                    systemFolderArray.push({
+                    folderMappingData["system_folders"].push({
+                        "id": await SystemUtils.getSystemFolderPersistentId(path),
                         "path": path,
-                        "system_id": await SystemUtils.getSystemFolderPersistentId(path)
                     });
                 }
-                folders["system_folders"] = systemFolderArray;
-                // TODO
-                JoplinDataUtils.saveData(folders);
+                // 保存数据
+                JoplinDataUtils.saveData(folderMappingData);
             },
         });
     }
