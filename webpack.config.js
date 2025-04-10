@@ -188,7 +188,11 @@ const baseConfig = {
 	...userConfig.webpackOverrides,
 };
 
-const pluginConfig = { ...baseConfig, entry: './src/index.ts',
+const pluginConfig = { ...baseConfig, 
+	entry: {
+		index: './src/index.ts',
+		main: './src/webview/Main.tsx',
+	},
 	resolve: {
 		alias: {
 			api: path.resolve(__dirname, 'api'),
@@ -199,7 +203,7 @@ const pluginConfig = { ...baseConfig, entry: './src/index.ts',
 		extensions: ['.js', '.tsx', '.ts', '.json'],
 	},
 	output: {
-		filename: 'index.js',
+		filename: '[name].js',
 		path: distDir,
 	},
 	plugins: [

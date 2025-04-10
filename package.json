@@ -16,14 +16,18 @@
   ],
   "devDependencies": {
     "@types/node": "^18.7.13",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.2",
     "chalk": "^4.1.0",
     "copy-webpack-plugin": "^11.0.0",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "tar": "^6.1.11",
-    "ts-loader": "^9.3.1",
-    "typescript": "^4.8.2",
-    "webpack": "^5.74.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^4.9.5",
+    "webpack": "^5.99.5",
     "webpack-cli": "^4.10.0"
   }
 }

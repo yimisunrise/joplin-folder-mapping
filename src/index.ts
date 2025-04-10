@@ -42,6 +42,6 @@ joplin.plugins.register({
             {
                 commandName: CommandMenuItem.OPEN_FOLDER_COMPARE,
             },
-        ], MenuItemLocation.Tools)
+        ], MenuItemLocation.Tools);
 	},
 });

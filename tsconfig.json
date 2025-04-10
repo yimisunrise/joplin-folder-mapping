@@ -3,8 +3,13 @@
 		"outDir": "./dist/",
 		"module": "commonjs",
 		"target": "es2015",
-		"jsx": "react",
+		"jsx": "react-jsx",
+		"esModuleInterop": true,
 		"allowJs": true,
-		"baseUrl": "."
-	}
+		"baseUrl": ".",
+		"paths": {
+			"api": ["./api"],
+		}
+	},
+	"include": ["src/webview/**/*.tsx", "src/**/*.ts"]
 }

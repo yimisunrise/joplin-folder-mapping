@@ -1,0 +1,13 @@
+.tree-container {
+    display: flex;
+    justify-content: space-between;
+}
+.tree {
+    width: 48%;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+ul {
+    list-style-type: none;
+    padding-left: 20px;
+}

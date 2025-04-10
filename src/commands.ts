@@ -1,5 +1,6 @@
 import joplin from 'api';
 import { JoplinFolderUtils, SystemUtils, JoplinDataUtils } from './utils';
+import { DialogView } from './DialogView';
 import * as path from 'path';
 
 
@@ -34,7 +35,6 @@ export enum CommandActionItem {
      * 打开系统目录
      */
     OPEN_SYSTEM_FOLDER = "FolderMapping_Action_OpenSystemFolder",
-
 }
 
 /**
@@ -134,7 +134,7 @@ export class CommandsRegister {
                 // 保存数据
                 JoplinDataUtils.saveData(folderMappingData);
                 // 打开目录对比窗口
-                // await joplin.views.dialogs.open('FolderCompareDialog');
+                DialogView.getInstance().openDialog();
             },
         });
     }
