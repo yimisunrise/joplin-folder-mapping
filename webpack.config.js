@@ -191,7 +191,7 @@ const baseConfig = {
 const pluginConfig = { ...baseConfig, 
 	entry: {
 		index: './src/index.ts',
-		main: './src/webview/Main.tsx',
+		main: './src/webview/main.tsx',
 	},
 	resolve: {
 		alias: {
