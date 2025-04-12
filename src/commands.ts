@@ -3,6 +3,8 @@ import { JoplinFolderUtils, SystemUtils, JoplinDataUtils } from './utils';
 import { FolderMappingData, JoplinFolder, SystemFolder, jsonToFolderMappingData } from './dto/folderMappingData';
 import { WebView } from './webView';
 import * as path from 'path';
+import { getJoplinSettingValue, SYSTEM_FOLDER_ROOT_PATH } from './settings';
+import { WebViewID } from './webViewType';
 
 /**
  * 菜单项命令
@@ -23,6 +25,11 @@ export enum MenuItemCommands {
      * 打开系统目录对比
      */
     OPEN_FOLDER_COMPARE = "FolderMapping_Menu_OpenFolderCompare",
+
+    /**
+     * 测试
+     */
+    TEST = "FolderMapping_Menu_Test",
 
 }
 
@@ -56,9 +63,9 @@ const MENU_ITEM_COMMANDS = [
         label: '同步目录结构',
         execute: async () => {
             // 获取设置中的默认根路径
-            const systemRootPath = await SystemUtils.getSystemRootPath();
+            const systemFolderRootPath = await getJoplinSettingValue(SYSTEM_FOLDER_ROOT_PATH);
             // 数据存储对象
-            const folderMappingData: FolderMappingData = new FolderMappingData(systemRootPath, [], []);
+            const folderMappingData: FolderMappingData = new FolderMappingData(systemFolderRootPath, [], []);
             // 获取所有Joplin的目录
             const folders = await JoplinFolderUtils.getFolders();
             const foldersItems =  folders["items"];
@@ -66,12 +73,12 @@ const MENU_ITEM_COMMANDS = [
                 for (const index in foldersItems) {
                     const item = foldersItems[index];
                     const joplinFolderPath = await JoplinFolderUtils.getFolderPath(item["id"]);
-                    const systemFolderExists = await SystemUtils.pathExists(systemRootPath + joplinFolderPath);
+                    const systemFolderExists = await SystemUtils.pathExists(systemFolderRootPath + joplinFolderPath);
                     folderMappingData.joplinFolders.push(new JoplinFolder(item["id"], item["title"], item["parent_id"], joplinFolderPath, systemFolderExists));
                 }
             }
             // 获取系统目录列表
-            const systemFolders = await SystemUtils.getSystemFolders(systemRootPath);
+            const systemFolders = await SystemUtils.getSystemFolders(systemFolderRootPath);
             if (systemFolders) {
                 for(const index in systemFolders) {
                     const path = systemFolders[index];
@@ -101,6 +108,16 @@ const MENU_ITEM_COMMANDS = [
             // 打开窗口
             WebView.getInstance().openDialog();
         },
+    },
+    {
+        name: MenuItemCommands.TEST,
+        label: '测试',
+        execute: async () => {
+            await joplin.views.panels.postMessage(WebView.getInstance().viewHandles[WebViewID.SYSTEM_FILE_PANEL], {
+                event: 'message',
+                data: await JoplinDataUtils.getData(),
+            });
+        },
     }
 ];
 
@@ -113,11 +130,11 @@ const ACTION_ITEM_COMMANDS = [
             const folderId = selectedFolder ? selectedFolder.id : null;
             if (folderId) {
                 // 获取设置中的默认根路径
-                const defaultFolderPath = await SystemUtils.getSystemRootPath();
+                const systemFolderRootPath = await getJoplinSettingValue(SYSTEM_FOLDER_ROOT_PATH);
                 // 通过目录ID获取目录路径
                 const folderPath = await JoplinFolderUtils.getFolderPath(folderId);
                 // 拼接系统目录路径
-                const fullFolderPath = path.join(defaultFolderPath, folderPath);
+                const fullFolderPath = path.join(systemFolderRootPath, folderPath);
                 // 创建系统目录如果不存在时
                 SystemUtils.createSystemFolderOfNotExist(fullFolderPath);
                 // 打开系统目录

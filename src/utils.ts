@@ -80,17 +80,7 @@ export class JoplinFolderUtils {
  * 系统工具类
  */
 export class SystemUtils {
-
-    /**
-     * 获取设置中的默认根路径
-     * @returns 默认根路径
-     */
-    static async getSystemRootPath(){
-        const settings = await joplin.settings.values(['defaultFolderPath']);
-        const defaultFolderPath = settings['defaultFolderPath'] as string;
-        return defaultFolderPath;
-    }
-
+    
     /**
      * 获取指定系统目录下的所有子目录（递归）
      * @param rootPath - 要扫描的根目录路径

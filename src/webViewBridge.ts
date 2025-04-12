@@ -1,9 +1,7 @@
-import { DialogView } from "src/dialogView";
+import { WebView } from "src/webView";
 
-function webviewBridge(instence: DialogView) {
-    console.log('webviewBridge--7->', instence);
+function webviewBridge(instence: WebView) {
     return (request) => {
-        console.log('webviewBridge--9->', request);
         switch (request.event) {
             case 'getData':
                 return instence.getData();

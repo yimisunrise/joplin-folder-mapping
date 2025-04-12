@@ -1,6 +1,7 @@
 import joplin from 'api';
 import { SettingItemType } from 'api/types';
 
+export const SYSTEM_FOLDER_ROOT_PATH = 'systemFolderRootPath';
 export const SYSTEM_FILE_PANEL_SHOW_TYPE_SETTING = 'systemFilePanelShowType';
 export enum PanelShowType {
   SHOW,
@@ -10,7 +11,7 @@ export enum PanelShowType {
 export const SECTION_NAME = 'Folder Mapping Section';
 
 export const SETTINGS = {
-  defaultFolderPath: {
+  [SYSTEM_FOLDER_ROOT_PATH]: {
     label: '基准根路径',
     type: SettingItemType.String,
     public: true,
@@ -25,7 +26,7 @@ export const SETTINGS = {
     value: PanelShowType.SHOW,
     isEnum: true,
     options: {
-      [PanelShowType.SHOW]: '现实',
+      [PanelShowType.SHOW]: '显示',
       [PanelShowType.HIDE]: '隐藏',
     },
     section: SECTION_NAME,
@@ -33,10 +34,23 @@ export const SETTINGS = {
   },
 };
 
+/**
+ * 注册设置项
+ * @returns
+ */
 export const setupSettings = async () => {
   await joplin.settings.registerSection(SECTION_NAME, {
     label: 'Folder Mapping',
   });
-
   await joplin.settings.registerSettings(SETTINGS);
 };
+
+/**
+ * 获取Joplin设置项的值
+ * @param key - 设置项的key
+ * @returns 
+ */
+export const getJoplinSettingValue = async (key: string): Promise<any> => {
+  const settings = await joplin.settings.values([key]);
+  return settings[key];
+}

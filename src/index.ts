@@ -2,6 +2,7 @@ import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
 import { MenuItemCommands, setupCommands } from './commands';
 import { setupSettings } from './settings';
+import { setupWebview } from './webView';
 
 
 joplin.plugins.register({
@@ -11,6 +12,7 @@ joplin.plugins.register({
 
         await setupSettings();
         await setupCommands();
+        await setupWebview();
 
 		// 创建笔记本右键菜单项
         await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', MenuItemCommands.OPEN_SYSTEM_FOLDER, MenuItemLocation.FolderContextMenu);
@@ -26,6 +28,9 @@ joplin.plugins.register({
             {
                 commandName: MenuItemCommands.OPEN_FOLDER_COMPARE,
             },
+            {
+                commandName: MenuItemCommands.TEST,
+            }
         ], MenuItemLocation.Tools);
 	},
 });
