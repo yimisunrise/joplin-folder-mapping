@@ -1,8 +1,12 @@
 import joplin from 'api';
 import { ViewHandle } from 'api/types';
+import webviewBridge from './webview/webviewBridge';
+import { JoplinDataUtils } from './utils';
 
 export class DialogView {
     private static instance: DialogView;
+
+    static joplin = joplin;
 
     private viewHandle: ViewHandle | null = null;
     private viewId: string = 'FolderMappingDialogView';
@@ -18,6 +22,10 @@ export class DialogView {
             DialogView.instance = new DialogView();
         }
         return DialogView.instance;
+    }
+
+    public getData = async (): Promise<string | null> => {
+        return JoplinDataUtils.getData();
     }
 
     /**
@@ -36,6 +44,7 @@ export class DialogView {
             await joplin.views.dialogs.setHtml(this.viewHandle, `
                 <div id="lgapp">loading</div>
             `);
+            await joplin.views.panels.onMessage(this.viewHandle, webviewBridge(this));
             await joplin.views.dialogs.addScript(this.viewHandle, this.viewCssPath);
             await joplin.views.dialogs.addScript(this.viewHandle, this.viewJsPath);
         }
