@@ -254,28 +254,17 @@ export class JoplinDataUtils {
     }
 
     /**
-     * 读取数据
-     * @param key - 数据键
-     * @returns 数据值
-     */
-    static async readDataByKey(key: string): Promise<any> {
-        return null;
-    }
-
-    /**
      * 读取JSON数据
-     * @returns 解析后的JSON对象
+     * @returns JSON数据
      */
-    static async getData(): Promise<any> {
+    static async getData(): Promise<string | null> {
         try {
             const filePath = await this.getDataFilePath();
             if (!SystemUtils.fileExists(filePath)) {
                 return null;
             }
             const data = fs.readFileSync(filePath, 'utf8');
-            // 解析JSON数据
-            this.dataObj = JSON.parse(data);
-            return this.dataObj;
+            return data;
         } catch (error) {
             console.error('Error reading data:', error);
             return null;

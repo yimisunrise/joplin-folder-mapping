@@ -1,6 +1,7 @@
 import joplin from 'api';
 import { JoplinFolderUtils, SystemUtils, JoplinDataUtils } from './utils';
-import { DialogView } from './DialogView';
+import { FolderMappingData, JoplinFolder, SystemFolder, jsonToFolderMappingData } from './dto/folderMappingData';
+import { DialogView } from './dialogView';
 import * as path from 'path';
 
 
@@ -77,40 +78,29 @@ export class CommandsRegister {
             name: CommandMenuItem.SYNCHRONOUS_DIRECTORY_STRUCTURE,
             label: '同步目录结构',
             execute: async () => {
-                // 数据存储对象
-                const folderMappingData = {};
                 // 获取设置中的默认根路径
-                folderMappingData["system_root_path"] = await SystemUtils.getSystemRootPath();
-                folderMappingData["joplin_folders"] = [];
-                folderMappingData["system_folders"] = [];
+                const systemRootPath = await SystemUtils.getSystemRootPath();
+                // 数据存储对象
+                const folderMappingData: FolderMappingData = new FolderMappingData(systemRootPath, [], []);
                 // 获取所有Joplin的目录
                 const folders = await JoplinFolderUtils.getFolders();
                 const foldersItems =  folders["items"];
                 if (foldersItems) {
                     for (const index in foldersItems) {
-                        try {
-                            const item = foldersItems[index];
-                            const joplinFolderPath = await JoplinFolderUtils.getFolderPath(item["id"])
-                            folderMappingData["joplin_folders"].push({
-                                "id": item["id"],
-                                "parent_id": item["parent_id"],
-                                "title": item["title"],
-                                "joplin_folder_path": joplinFolderPath,
-                                "system_folder_exists": await SystemUtils.pathExists(folderMappingData["system_root_path"] + joplinFolderPath),
-                            });
-                        } catch (error) {
-                            console.error('Error:', error);
-                        }
+                        const item = foldersItems[index];
+                        const joplinFolderPath = await JoplinFolderUtils.getFolderPath(item["id"]);
+                        const systemFolderExists = await SystemUtils.pathExists(systemRootPath + joplinFolderPath);
+                        folderMappingData.joplinFolders.push(new JoplinFolder(item["id"], item["title"], item["parent_id"], joplinFolderPath, systemFolderExists));
                     }
                 }
                 // 获取系统目录列表
-                const systemFolders = await SystemUtils.getSystemFolders(folderMappingData["system_root_path"])
-                for(const index in systemFolders) {
-                    const path = systemFolders[index];
-                    folderMappingData["system_folders"].push({
-                        "id": await SystemUtils.getSystemFolderPersistentId(path),
-                        "path": path,
-                    });
+                const systemFolders = await SystemUtils.getSystemFolders(systemRootPath);
+                if (systemFolders) {
+                    for(const index in systemFolders) {
+                        const path = systemFolders[index];
+                        const id = await SystemUtils.getSystemFolderPersistentId(path);
+                        folderMappingData.systemFolders.push(new SystemFolder(id, path));
+                    }
                 }
                 // 保存数据
                 JoplinDataUtils.saveData(folderMappingData);
@@ -127,10 +117,14 @@ export class CommandsRegister {
             label: '打开目录对比',
             execute: async () => {
                 // 获取数据
-                const folderMappingData = await JoplinDataUtils.getData();
-                console.log("folderMappingData", folderMappingData);
+                const folderMappingDataJson = await JoplinDataUtils.getData();
+                console.log("folderMappingDataJson", folderMappingDataJson);
+                const folderMappingData = jsonToFolderMappingData(folderMappingDataJson);
                 // 目录对比
-                folderMappingData["folder_compare"] = [];
+                folderMappingData.compares = []
+                folderMappingData.compares.push({
+                    "id": "daf"
+                });
                 // 保存数据
                 JoplinDataUtils.saveData(folderMappingData);
                 // 打开目录对比窗口
@@ -151,16 +145,12 @@ export class CommandsRegister {
                 if (folderId) {
                     // 获取设置中的默认根路径
                     const defaultFolderPath = await SystemUtils.getSystemRootPath();
-
                     // 通过目录ID获取目录路径
                     const folderPath = await JoplinFolderUtils.getFolderPath(folderId);
-
                     // 拼接系统目录路径
                     const fullFolderPath = path.join(defaultFolderPath, folderPath);
-
                     // 创建系统目录如果不存在时
                     SystemUtils.createSystemFolderOfNotExist(fullFolderPath);
-
                     // 打开系统目录
                     SystemUtils.openSystemFolder(fullFolderPath);
                 } else {
