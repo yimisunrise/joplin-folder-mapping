@@ -38,7 +38,7 @@ const SystemFileList: React.FC = () => {
             <ul style={{ height: panaleHeight }}>
             {systemFiles && systemFiles.map((file: SystemFile, index: number) => (
                 <li key={index} onDoubleClick={()=>{openFileClick(file)}}>
-                    <span>{file.name}</span>
+                    <span title={file.name}>{file.name}</span>
                 </li>
             ))}
             </ul>
