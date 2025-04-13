@@ -132,10 +132,7 @@ export class SystemUtils {
             const items = fs.readdirSync(dirPath, { withFileTypes: true });
             const files: SystemFile[] = [];
             for (const item of items) {
-                if (item.isFile()) {
-                    const fullPath = path.join(dirPath, item.name);
-                    files.push(new SystemFile(item.name, fullPath));
-                }
+                files.push(new SystemFile(item.name, path.join(dirPath, item.name), item.isDirectory()));
             }
             return files;
         } catch (error) {

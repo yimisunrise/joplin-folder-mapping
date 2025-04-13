@@ -63,7 +63,8 @@ export class SystemFile {
   public size: number;
   constructor(
     public name: string,
-    public path: string
+    public path: string,
+    public isDirectory: boolean
   ){}
 }
 
