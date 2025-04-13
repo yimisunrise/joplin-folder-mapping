@@ -196,6 +196,7 @@
 .system-file-list ul {
     padding-left: 0;
     overflow-y: auto;
+    margin: 0;
 }
 
 .system-file-list ul li {
