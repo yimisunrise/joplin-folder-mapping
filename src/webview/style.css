@@ -108,6 +108,23 @@
     height: var(--scrollbar-size, 7px);
 }
 
+.help-tips {
+    position: relative;
+    display: inline-block;
+    width: calc(var(--joplin-font-size) + 2px);
+    height: calc(var(--joplin-font-size) + 2px);
+    background-color: var(--joplin-background-color-active3);
+    color: var(--joplin-color2) !important;
+    border-radius: 50%;
+    text-align: center;
+    font-size: var(--joplin-font-size) !important;
+    line-height: calc(var(--joplin-font-size) + 2px);
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    margin-left: 5px;
+}
+
 .tree-container {
     display: flex;
     justify-content: space-between;
@@ -126,6 +143,7 @@
 .system-file-list {
     background-color: var(--joplin-background-color3);
     overflow-x: hidden;
+    user-select: none;
 }
 
 .system-file-list .header {
@@ -133,7 +151,6 @@
     border-bottom: 1px solid var(--joplin-divider-color);
     font-weight: bold;
     line-height: 13px;
-    user-select: none;
 }
 
 .system-file-list .header span {
@@ -153,12 +170,20 @@
     cursor: pointer;
 }
 
+.system-file-list .empty{
+    padding: 10px 10px;
+    color: var(--joplin-color3);
+    font-size: 13px;
+    line-height: 13px;
+    text-align: center;
+}
+
 .system-file-list ul {
     padding-left: 0;
     overflow-y: auto;
 }
 
-.system-file-list li {
+.system-file-list ul li {
     padding: 0 10px;
     height: 34px;
     line-height: 34px;
@@ -168,6 +193,6 @@
     text-overflow: ellipsis;
 }
 
-.system-file-list li:hover {
+.system-file-list ul li:hover {
     background-color: var(--joplin-background-color-hover3);
 }

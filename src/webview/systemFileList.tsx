@@ -3,7 +3,7 @@ import { SystemFile } from '../dto/folderMappingData';
 import { JoplinMessageEvent, WebviewMessageEvent } from '../webViewTypes';
 
 const SystemFileList: React.FC = () => {
-    const [ systemFiles, setSystemFiles ] = React.useState<SystemFile[]>(null);
+    const [ systemFiles, setSystemFiles ] = React.useState<SystemFile[]>([]);
     const [ panaleHeight, setPanaleHeight ] = React.useState<string>('500px');
     useEffect(() => {
         // 监听Joplin发送的消息
@@ -29,19 +29,33 @@ const SystemFileList: React.FC = () => {
         webviewApi.postMessage({ event: WebviewMessageEvent.OPEN_SELECTED_FOLDER});
     };
 
+    const renderSystemFileList = () => {
+        if (!systemFiles || systemFiles.length === 0) {
+            return (
+                <div className="empty">
+                    <span>没有系统文件</span>
+                </div>
+            );
+        }
+        return (
+            <ul style={{ height: panaleHeight }}>
+                {systemFiles.map((file: SystemFile, index: number) => (
+                    <li key={index} onDoubleClick={() => { openFileClick(file) }}>
+                        <span title={file.name}>{file.name}</span>
+                    </li>
+                ))}
+            </ul>
+        );
+    }
+
     return (
         <div className="system-file-list">
             <div className='header'>
                 <span>系统文件</span>
+                <span className='help-tips' title='双击文件打开'>?</span>
                 <i onClick={() => {openFolderClick()}}>打开</i>
             </div>
-            <ul style={{ height: panaleHeight }}>
-            {systemFiles && systemFiles.map((file: SystemFile, index: number) => (
-                <li key={index} onDoubleClick={()=>{openFileClick(file)}}>
-                    <span title={file.name}>{file.name}</span>
-                </li>
-            ))}
-            </ul>
+            {renderSystemFileList()}
         </div>
     );
 };
