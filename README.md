@@ -25,11 +25,22 @@ For information on how to build or publish the plugin, please see [GENERATOR_DOC
 
 ## 插件的配置
 
-![d35c31766b30b32183c6d1f7db75155f.png](README.assets/2e8c8cd16af13e3c612c38e9be08e1a2d006688f.png)
+![](README.assets/2025-04-13-16-52-50-image.png)
+
+
 
 ## 插件的使用
 
+
+### 在笔记本目录中右键
+
 ![b2272cda4e54bc92ba2cb27f12bf6e1c.png](README.assets/2d09ee9e3195eda7fb2bb2a49b25c6138408e2fa.png)
+
+### 在文件面板右上角打开
+
+![](README.assets/2025-04-13-16-53-57-image.png)
+
+
 
 ## 打开后的效果
 
