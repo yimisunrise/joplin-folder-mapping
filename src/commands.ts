@@ -4,7 +4,6 @@ import { FolderMappingData, JoplinFolder, SystemFolder, jsonToFolderMappingData 
 import { WebView } from './webView';
 import * as path from 'path';
 import { getJoplinSettingValue, SYSTEM_FOLDER_ROOT_PATH } from './settings';
-import { WebViewID } from './webViewType';
 
 /**
  * 菜单项命令
@@ -78,11 +77,11 @@ const MENU_ITEM_COMMANDS = [
                 }
             }
             // 获取系统目录列表
-            const systemFolders = await SystemUtils.getSystemFolders(systemFolderRootPath);
+            const systemFolders = await SystemUtils.getFolderFullPathList(systemFolderRootPath);
             if (systemFolders) {
                 for(const index in systemFolders) {
                     const path = systemFolders[index];
-                    const id = await SystemUtils.getSystemFolderPersistentId(path);
+                    const id = await SystemUtils.getFolderPersistentId(path);
                     folderMappingData.systemFolders.push(new SystemFolder(id, path));
                 }
             }
@@ -113,10 +112,8 @@ const MENU_ITEM_COMMANDS = [
         name: MenuItemCommands.TEST,
         label: '测试',
         execute: async () => {
-            await joplin.views.panels.postMessage(WebView.getInstance().viewHandles[WebViewID.SYSTEM_FILE_PANEL], {
-                event: 'message',
-                data: await JoplinDataUtils.getData(),
-            });
+            // TODO: 测试代码
+            
         },
     }
 ];
@@ -136,9 +133,9 @@ const ACTION_ITEM_COMMANDS = [
                 // 拼接系统目录路径
                 const fullFolderPath = path.join(systemFolderRootPath, folderPath);
                 // 创建系统目录如果不存在时
-                SystemUtils.createSystemFolderOfNotExist(fullFolderPath);
+                SystemUtils.createFolderOfNotExist(fullFolderPath);
                 // 打开系统目录
-                SystemUtils.openSystemFolder(fullFolderPath);
+                SystemUtils.openFileOrFolder(fullFolderPath);
             } else {
                 console.info('No folder ID provided');
             }

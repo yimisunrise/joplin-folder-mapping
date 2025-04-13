@@ -53,6 +53,20 @@ export class SystemFolder {
   ){}
 }
 
+/**
+ * SystemFile
+ * @description Represents a file in the system
+ */
+export class SystemFile {
+  public id: string;
+  public type: string;
+  public size: number;
+  constructor(
+    public name: string,
+    public path: string
+  ){}
+}
+
 export const jsonToFolderMappingData = function (orderJSON: string): FolderMappingData {
   return plainToClass(FolderMappingData, JSON.parse(orderJSON));
 }

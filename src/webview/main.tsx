@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { createRoot } from "react-dom/client";
-import { WebViewID } from "../webViewType";
+import { WebViewID } from "../webViewTypes";
 
 import FolderTreeCompare from "./folderTreeCompare";
 import SystemFileList from "./systemFileList";

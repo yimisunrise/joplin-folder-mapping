@@ -3,6 +3,7 @@ import { SettingItemType } from 'api/types';
 
 export const SYSTEM_FOLDER_ROOT_PATH = 'systemFolderRootPath';
 export const SYSTEM_FILE_PANEL_SHOW_TYPE_SETTING = 'systemFilePanelShowType';
+export const SYSTEM_FILE_PANEL_HEIGHT_SETTING = 'systemFilePanelHeightSetting';
 export enum PanelShowType {
   SHOW,
   HIDE,
@@ -31,6 +32,14 @@ export const SETTINGS = {
     },
     section: SECTION_NAME,
     description: "开启后，选中Joplin笔记本后对应的系统文件路径下的文件列表将显示在面板中，关闭后隐藏",
+  },
+  [SYSTEM_FILE_PANEL_HEIGHT_SETTING]: {
+    label: '系统文件面板高度',
+    type: SettingItemType.Int,
+    public: true,
+    value: 500,
+    section: SECTION_NAME,
+    description: "系统文件面板高度, 根据自己需求情况进行调整，单位为px",
   },
 };
 

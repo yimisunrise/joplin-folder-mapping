@@ -2,6 +2,7 @@ import joplin from 'api';
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec } from 'child_process';
+import { SystemFile } from './dto/folderMappingData';
 
 /**
  * Joplin目录工具类
@@ -82,11 +83,11 @@ export class JoplinFolderUtils {
 export class SystemUtils {
     
     /**
-     * 获取指定系统目录下的所有子目录（递归）
+     * 递归获取指定目录下的所有子目录的完整路径
      * @param rootPath - 要扫描的根目录路径
      * @returns 所有子目录路径数组
      */
-    static async getSystemFolders(rootPath: string): Promise<string[]> {
+    static async getFolderFullPathList(rootPath: string): Promise<string[]> {
         if (!this.pathExists(rootPath)) {
             return [];
         }
@@ -94,7 +95,7 @@ export class SystemUtils {
     }
 
     /**
-     * 递归获取所有子目录
+     * 递归获取指定目录下的所有子目录的完整路径
      * @param dirPath - 当前目录路径
      * @param result - 结果数组
      * @returns 所有子目录路径数组
@@ -119,28 +120,44 @@ export class SystemUtils {
     }
 
     /**
-     * 判断操作系统中指定路径是否存在
-     * @param folderPath - 要检查的路径
-     * @returns 如果路径存在则返回true，否则返回false
+     * 获取指定系统目录下的所有文件的完整路径
+     * @param dirPath - 要扫描的目录路径
+     * @returns 
      */
-    static pathExists(folderPath: string): boolean {
-        return fs.existsSync(folderPath);
+    static async getFiles(dirPath: string): Promise<SystemFile[]> {
+        if (!this.pathExists(dirPath)) {
+            return [];
+        }
+        try {
+            const items = fs.readdirSync(dirPath, { withFileTypes: true });
+            const files: SystemFile[] = [];
+            for (const item of items) {
+                if (item.isFile()) {
+                    const fullPath = path.join(dirPath, item.name);
+                    files.push(new SystemFile(item.name, fullPath));
+                }
+            }
+            return files;
+        } catch (error) {
+            console.error('Error reading system files:', error);
+            return [];
+        }
     }
 
     /**
-     * 判断操作系统中指定文件是否存在
-     * @param filePath - 要检查的文件路径
-     * @returns 如果文件存在则返回true，否则返回false
+     * 判断操作系统中指定路径是否存在
+     * @param path - 要检查的路径
+     * @returns 如果路径存在则返回true，否则返回false
      */
-    static fileExists(filePath: string): boolean {
-        return fs.existsSync(filePath);
+    static pathExists(path: string): boolean {
+        return fs.existsSync(path);
     }
 
     /**
      * 创建系统目录如果不存在时
      * @param folderPath - 要创建的目录路径
      */
-    static createSystemFolderOfNotExist(folderPath: string): void {
+    static createFolderOfNotExist(folderPath: string): void {
         if (!this.pathExists(folderPath)) {
             fs.mkdirSync(folderPath, { recursive: true });
             console.info(`系统目录已创建: ${folderPath}`);
@@ -150,26 +167,29 @@ export class SystemUtils {
     }
 
     /**
-     * 打开系统目录
-     * @param folderPath - 要打开的目录路径
+     * 打开系统文件或者目录
+     * @param path - 要打开的文件路径
+     * @returns
+     * @throws 如果文件不存在则抛出错误
+     * @description 根据操作系统类型使用不同的命令打开文件
      */
-    static openSystemFolder(folderPath: string): void {
-        if (this.pathExists(folderPath)) {
+    static async openFileOrFolder(path: string): Promise<void> {
+        if (this.pathExists(path)) {
             switch (process.platform) {
                 case 'win32':
-                    exec(`start "" "${folderPath}"`);
+                    exec(`start "" "${path}"`);
                     break;
                 case 'darwin':
-                    exec(`open "${folderPath}"`);
+                    exec(`open "${path}"`);
                     break;
                 case 'linux':
-                    exec(`xdg-open "${folderPath}"`);
+                    exec(`xdg-open "${path}"`);
                     break;
                 default:
                     console.error('Unsupported platform:', process.platform);
             }
         } else {
-            console.error(`系统目录不存在: ${folderPath}`);
+            console.error(`系统文件或目录不存在: ${path}`);
         }
     }
 
@@ -178,7 +198,7 @@ export class SystemUtils {
      * @param folderPath - 目录路径
      * @returns 目录的唯一标识符
      */
-    static async getSystemFolderPersistentId(folderPath: string): Promise<string> {
+    static async getFolderPersistentId(folderPath: string): Promise<string> {
         if (!this.pathExists(folderPath)) {
             throw new Error(`目录不存在: ${folderPath}`);
         }
@@ -220,11 +240,6 @@ export class JoplinDataUtils {
     private static dataFileName =  "data.json";
 
     /**
-     * 数据对象
-     */
-    private static dataObj = undefined;
-
-    /**
      * 获取数据文件路径
      * @returns 
      */
@@ -250,7 +265,7 @@ export class JoplinDataUtils {
     static async getData(): Promise<string | null> {
         try {
             const filePath = await this.getDataFilePath();
-            if (!SystemUtils.fileExists(filePath)) {
+            if (!SystemUtils.pathExists(filePath)) {
                 return null;
             }
             const data = fs.readFileSync(filePath, 'utf8');
@@ -267,7 +282,6 @@ export class JoplinDataUtils {
      */
     static async saveData(data: any): Promise<void> {
         try {
-            this.dataObj = data;
             const filePath = await this.getDataFilePath();
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
         } catch (error) {

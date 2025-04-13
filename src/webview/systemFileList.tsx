@@ -1,31 +1,44 @@
 import React, { useEffect } from 'react';
-import { FolderMappingData, SystemFolder, jsonToFolderMappingData } from '../dto/folderMappingData';
+import { SystemFile } from '../dto/folderMappingData';
+import { JoplinMessageEvent, WebviewMessageEvent } from '../webViewTypes';
 
 const SystemFileList: React.FC = () => {
-    const [ data, setData ] = React.useState<FolderMappingData>(null);
+    const [ systemFiles, setSystemFiles ] = React.useState<SystemFile[]>(null);
+    const [ panaleHeight, setPanaleHeight ] = React.useState<string>('500px');
     useEffect(() => {
-        // webviewApi.postMessage({ event: 'getData', data: '' }).then((response: string) => {
-        //     setData(jsonToFolderMappingData(response));
-        // })
+        // 监听Joplin发送的消息
         webviewApi.onMessage((payload: any) => {
-            if (payload.message.event === 'message') {
-                console.log('Received ---- 18 ----', payload.message.data);
-                setData(jsonToFolderMappingData(payload.message.data));
+            // 接收文件列表数据
+            if (payload.message.event === JoplinMessageEvent.SYSTEM_FILES) {
+                setSystemFiles(payload.message.data);
             }
+        });
+        // 获取面板高度
+        webviewApi.postMessage({ event: WebviewMessageEvent.GET_FILE_PANEL_HEIGHT}).then((height: string) => {
+            setPanaleHeight(height);
         });
     }, []);
 
-    const handleClick = (folder: SystemFolder) => {
-        alert(folder.path);
+    // 打开点击的文件
+    const openFileClick = (file: SystemFile) => {
+        webviewApi.postMessage({ event: WebviewMessageEvent.OPEN_FILE, data: file.path });
+    };
+
+    // 打开当前选中的笔记本对应的系统文件夹
+    const openFolderClick = () => {
+        webviewApi.postMessage({ event: WebviewMessageEvent.OPEN_SELECTED_FOLDER});
     };
 
     return (
-        <div>
-            <h2>系统文件</h2>
-            <ul>
-            {data && data.joplinFolders.map((folder: SystemFolder, index: number) => (
-                <li key={index}>
-                    <div onClick={()=>{handleClick(folder)}}>{folder.path}</div>
+        <div className="system-file-list">
+            <div className='header'>
+                <span>系统文件</span>
+                <i onClick={() => {openFolderClick()}}>打开</i>
+            </div>
+            <ul style={{ height: panaleHeight }}>
+            {systemFiles && systemFiles.map((file: SystemFile, index: number) => (
+                <li key={index} onDoubleClick={()=>{openFileClick(file)}}>
+                    <span>{file.name}</span>
                 </li>
             ))}
             </ul>
