@@ -1,6 +1,6 @@
 import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
-import { MenuItemCommands, setupCommands } from './commands';
+import { Commands, setupCommands } from './commands';
 import { setupSettings } from './settings';
 import { setupWebview } from './webView';
 
@@ -15,21 +15,21 @@ joplin.plugins.register({
         await setupWebview();
 
 		// 创建笔记本右键菜单项
-        await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', MenuItemCommands.OPEN_SYSTEM_FOLDER, MenuItemLocation.FolderContextMenu);
+        await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED, MenuItemLocation.FolderContextMenu);
 
         // 创建Tools菜单项
         await joplin.views.menus.create('MappingOpen_MenuOfFolder_002', 'Folder Mapping', [
             {
-                commandName: MenuItemCommands.OPEN_SYSTEM_FOLDER,
+                commandName: Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED,
             },
             {
-                commandName: MenuItemCommands.SYNCHRONOUS_DIRECTORY_STRUCTURE,
+                commandName: Commands.SYNCHRONOUS_DIRECTORY_STRUCTURE,
             },
             {
-                commandName: MenuItemCommands.OPEN_FOLDER_COMPARE,
+                commandName: Commands.OPEN_FOLDER_COMPARE_DIALOG,
             },
             {
-                commandName: MenuItemCommands.TEST,
+                commandName: Commands.TEST,
             }
         ], MenuItemLocation.Tools);
 	},

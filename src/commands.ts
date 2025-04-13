@@ -6,59 +6,73 @@ import * as path from 'path';
 import { getJoplinSettingValue, SYSTEM_FOLDER_ROOT_PATH } from './settings';
 
 /**
- * 菜单项命令
+ * 命令项
  */
-export enum MenuItemCommands {
+export enum Commands {
 
     /**
-     * 打开系统目录
+     * 打开选中记事本对应的系统目录
      */
-    OPEN_SYSTEM_FOLDER = "FolderMapping_Menu_OpenSystemFolder",
+    OPEN_SYSTEM_FOLDER_BY_SELECTED = "FolderMapping_OpenSystemFolderBySelected",
+
+    /**
+     * 打开指定路径的系统目录
+     */
+    OPEN_SYSTEM_FOLDER_BY_PATH = "FolderMapping_OpenSystemFolderByPath",
 
     /**
      * 同步目录结构
      */
-    SYNCHRONOUS_DIRECTORY_STRUCTURE = "FolderMapping_Menu_SynchronousDirectoryStructure",
+    SYNCHRONOUS_DIRECTORY_STRUCTURE = "FolderMapping_SynchronousDirectoryStructure",
 
     /**
-     * 打开系统目录对比
+     * 打开目录对比窗口
      */
-    OPEN_FOLDER_COMPARE = "FolderMapping_Menu_OpenFolderCompare",
+    OPEN_FOLDER_COMPARE_DIALOG = "FolderMapping_OpenFolderCompareDialog",
 
     /**
      * 测试
      */
-    TEST = "FolderMapping_Menu_Test",
-
-}
-
-/**
- * 动作行为命令
- */
-export enum ActionItemCommands {
-
-    /**
-     * 打开系统目录
-     */
-    OPEN_SYSTEM_FOLDER = "FolderMapping_Action_OpenSystemFolder",
+    TEST = "FolderMapping_Test",
 }
 
 // 菜单项命令
 const MENU_ITEM_COMMANDS = [
     {
-        name: MenuItemCommands.OPEN_SYSTEM_FOLDER,
-        label: '打开系统目录',
+        name: Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED,
+        label: '打开选中目录',
         execute: async () => {
             const selectedFolder = await joplin.workspace.selectedFolder();
             if (selectedFolder) {
-                await joplin.commands.execute(ActionItemCommands.OPEN_SYSTEM_FOLDER, selectedFolder);
+                await joplin.commands.execute(Commands.OPEN_SYSTEM_FOLDER_BY_PATH, selectedFolder);
             } else {
                 await joplin.views.dialogs.showMessageBox('No notebook selected');
             }
         },
     },
     {
-        name: MenuItemCommands.SYNCHRONOUS_DIRECTORY_STRUCTURE,
+        name: Commands.OPEN_SYSTEM_FOLDER_BY_PATH,
+        label: '打开指定目录',
+        execute: async (selectedFolder: any) => {
+            const folderId = selectedFolder ? selectedFolder.id : null;
+            if (folderId) {
+                // 获取设置中的默认根路径
+                const systemFolderRootPath = await getJoplinSettingValue(SYSTEM_FOLDER_ROOT_PATH);
+                // 通过目录ID获取目录路径
+                const folderPath = await JoplinFolderUtils.getFolderPath(folderId);
+                // 拼接系统目录路径
+                const fullFolderPath = path.join(systemFolderRootPath, folderPath);
+                // 创建系统目录如果不存在时
+                SystemUtils.createFolderOfNotExist(fullFolderPath);
+                // 打开系统目录
+                SystemUtils.openFileOrFolder(fullFolderPath);
+            } else {
+                console.info('No folder ID provided');
+            }
+        },
+    },
+    {
+        name: Commands.SYNCHRONOUS_DIRECTORY_STRUCTURE,
         label: '同步目录结构',
         execute: async () => {
             // 获取设置中的默认根路径
@@ -90,7 +104,7 @@ const MENU_ITEM_COMMANDS = [
         },
     },
     {
-        name: MenuItemCommands.OPEN_FOLDER_COMPARE,
+        name: Commands.OPEN_FOLDER_COMPARE_DIALOG,
         label: '打开目录对比',
         execute: async () => {
             // 获取数据
@@ -109,7 +123,7 @@ const MENU_ITEM_COMMANDS = [
         },
     },
     {
-        name: MenuItemCommands.TEST,
+        name: Commands.TEST,
         label: '测试',
         execute: async () => {
             // TODO: 测试代码
@@ -118,33 +132,8 @@ const MENU_ITEM_COMMANDS = [
     }
 ];
 
-// 动作行为命令
-const ACTION_ITEM_COMMANDS = [
-    {
-        name: ActionItemCommands.OPEN_SYSTEM_FOLDER,
-        label: '打开系统目录',
-        execute: async (selectedFolder: any) => {
-            const folderId = selectedFolder ? selectedFolder.id : null;
-            if (folderId) {
-                // 获取设置中的默认根路径
-                const systemFolderRootPath = await getJoplinSettingValue(SYSTEM_FOLDER_ROOT_PATH);
-                // 通过目录ID获取目录路径
-                const folderPath = await JoplinFolderUtils.getFolderPath(folderId);
-                // 拼接系统目录路径
-                const fullFolderPath = path.join(systemFolderRootPath, folderPath);
-                // 创建系统目录如果不存在时
-                SystemUtils.createFolderOfNotExist(fullFolderPath);
-                // 打开系统目录
-                SystemUtils.openFileOrFolder(fullFolderPath);
-            } else {
-                console.info('No folder ID provided');
-            }
-        },
-    }
-];
-
 export const setupCommands = async () => {
-    [...ACTION_ITEM_COMMANDS, ...MENU_ITEM_COMMANDS].forEach(item => {
+    MENU_ITEM_COMMANDS.forEach(item => {
         joplin.commands.register(item);
     });
 };

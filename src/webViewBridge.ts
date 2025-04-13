@@ -1,6 +1,6 @@
 import { WebView } from "src/webView";
 import { WebviewMessageEvent } from "./webViewTypes";
-import { ActionItemCommands } from "./commands";
+import { Commands } from "./commands";
 
 function webviewBridge(instence: WebView) {
     return async (request) => {
@@ -13,8 +13,7 @@ function webviewBridge(instence: WebView) {
                 return instence.systemUtils.openFileOrFolder(request.data);
             case WebviewMessageEvent.OPEN_SELECTED_FOLDER:
                 // 打开当前选中的笔记本对应的系统文件夹
-                const selectedFolder = await instence.joplin.workspace.selectedFolder();
-                return instence.executeCommand(ActionItemCommands.OPEN_SYSTEM_FOLDER, selectedFolder);
+                return instence.executeCommand(Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED);
             default:
                 break;
         }
