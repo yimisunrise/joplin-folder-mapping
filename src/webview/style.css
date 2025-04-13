@@ -125,6 +125,21 @@
     margin-left: 5px;
 }
 
+.help-tips[data-tips]:hover:after {
+    content: attr(data-tips);
+    position: absolute;
+    background-color: var(--joplin-background-color-active4);
+    color: var(--joplin-color3);
+    left: 20px;
+    top: -5px;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: var(--joplin-font-size);
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+}
+
 .tree-container {
     display: flex;
     justify-content: space-between;

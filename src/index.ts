@@ -18,19 +18,19 @@ joplin.plugins.register({
         await joplin.views.menuItems.create('MappingOpen_MenuOfFolder_001', Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED, MenuItemLocation.FolderContextMenu);
 
         // 创建Tools菜单项
-        await joplin.views.menus.create('MappingOpen_MenuOfFolder_002', 'Folder Mapping', [
-            {
-                commandName: Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED,
-            },
-            {
-                commandName: Commands.SYNCHRONOUS_DIRECTORY_STRUCTURE,
-            },
-            {
-                commandName: Commands.OPEN_FOLDER_COMPARE_DIALOG,
-            },
-            {
-                commandName: Commands.TEST,
-            }
-        ], MenuItemLocation.Tools);
+        // await joplin.views.menus.create('MappingOpen_MenuOfFolder_002', 'Folder Mapping', [
+        //     {
+        //         commandName: Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED,
+        //     },
+        //     {
+        //         commandName: Commands.SYNCHRONOUS_DIRECTORY_STRUCTURE,
+        //     },
+        //     {
+        //         commandName: Commands.OPEN_FOLDER_COMPARE_DIALOG,
+        //     },
+        //     {
+        //         commandName: Commands.TEST,
+        //     }
+        // ], MenuItemLocation.Tools);
 	},
 });

@@ -41,7 +41,7 @@ const SystemFileList: React.FC = () => {
             <ul style={{ height: panaleHeight }}>
                 {systemFiles.map((file: SystemFile, index: number) => (
                     <li key={index} onDoubleClick={() => { openFileClick(file) }}>
-                        <span title={file.name}>{file.name}</span>
+                        <span>{file.name}</span>
                     </li>
                 ))}
             </ul>
@@ -52,7 +52,7 @@ const SystemFileList: React.FC = () => {
         <div className="system-file-list">
             <div className='header'>
                 <span>系统文件</span>
-                <span className='help-tips' title='双击文件打开'>?</span>
+                <span className='help-tips' data-tips='双击列表中文件名打开文件'>?</span>
                 <i onClick={() => {openFolderClick()}}>打开</i>
             </div>
             {renderSystemFileList()}
