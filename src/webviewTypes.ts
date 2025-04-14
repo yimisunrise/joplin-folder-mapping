@@ -22,5 +22,5 @@ export enum JoplinMessageEvent {
 export enum WebviewMessageEvent {
     OPEN_FILE = 'openFile',
     OPEN_SELECTED_FOLDER = 'openSelectedFolder',
-    GET_FILE_PANEL_HEIGHT = 'getFilePanelHeight',
+    GET_FILE_PANEL_SETTINGS = 'getFilePanelSettings',
 }

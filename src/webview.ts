@@ -1,9 +1,10 @@
 import joplin from 'api';
 import { ViewHandle } from 'api/types';
-import webviewBridge from './webViewBridge';
+import webviewBridge from './webviewBridge';
 import { JoplinDataUtils, JoplinFolderUtils, SystemUtils } from './utils';
-import { JoplinMessageEvent, WebViewID } from './webViewTypes';
-import { getJoplinSettingValue, PanelShowType, SYSTEM_FILE_PANEL_HEIGHT_SETTING, SYSTEM_FILE_PANEL_SHOW_TYPE_SETTING, SYSTEM_FOLDER_ROOT_PATH } from './settings';
+import { JoplinMessageEvent, WebViewID } from './webviewTypes';
+import { getSettingValue, getSettingValues} from './settings';
+import { SettingKey } from './types';
 
 export class WebView {
     private static instance: WebView;
@@ -22,21 +23,20 @@ export class WebView {
     private viewJsPath: string = './main.js';
 
     /**
-     * 系统文件面板是否显示
+     * 系统文件面板是否启用
      * @returns {Promise<boolean>} - 返回一个Promise，表示系统文件面板是否显示
      */
-    public isSystemFilePanelShow = async (): Promise<boolean> => {
-        const isSystemFilePanelShow = await getJoplinSettingValue(SYSTEM_FILE_PANEL_SHOW_TYPE_SETTING);
-        return isSystemFilePanelShow === PanelShowType.SHOW;
+    public isSystemFilePanelEnabled = async (): Promise<boolean> => {
+        return await getSettingValue(SettingKey.SYSTEM_FILE_PANEL_ENABLED);
     }
 
     /**
-     * 获取系统文件面板高度
-     * @returns 系统文件面板高度
+     * 获取系统文件面板设置
+     * @returns 系统文件面板设置
      */
-    public getSystemFilePanelHeight = async (): Promise<string> => {
-        const systemFilePanelHeight = await getJoplinSettingValue(SYSTEM_FILE_PANEL_HEIGHT_SETTING);
-        return systemFilePanelHeight + 'px';
+    public getSystemFilePanelSettings = async (): Promise<Record<string, any>> => {
+        const settings = await getSettingValues([SettingKey.SYSTEM_FILE_PANEL_HEIGHT_SETTING, SettingKey.SYSTEM_FILE_PANEL_IS_SHOW_HIDDEN_FILES]);
+        return settings;
     }
 
     private constructor() {
@@ -86,9 +86,9 @@ export class WebView {
         // 获取面板实例
         let viewHandle = this.viewHandles[WebViewID.SYSTEM_FILE_PANEL];
         // 判断是否显示系统文件面板
-        const isSystemFilePanelShow = await this.isSystemFilePanelShow();
+        const isSystemFilePanelEnabled = await this.isSystemFilePanelEnabled();
         // 如果面板需要现实但面板未创建，则需要创建
-        if (isSystemFilePanelShow && !viewHandle) {
+        if (isSystemFilePanelEnabled && !viewHandle) {
             viewHandle = await joplin.views.panels.create(WebViewID.SYSTEM_FILE_PANEL);
             this.viewHandles[WebViewID.SYSTEM_FILE_PANEL] = viewHandle;
             await joplin.views.panels.setHtml(viewHandle, `
@@ -108,7 +108,7 @@ export class WebView {
                             // eslint-disable-next-line no-console
                             console.info('Current note folder path:', path);
                             // 获取设置中的默认根路径
-                            const systemFolderRootPath = await getJoplinSettingValue(SYSTEM_FOLDER_ROOT_PATH);
+                            const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
                             // 在这里可以执行打开系统文件夹的操作
                             const files = await SystemUtils.getFiles(systemFolderRootPath + path);
                             // eslint-disable-next-line no-console
@@ -132,7 +132,7 @@ export class WebView {
 
         // 如果面板已经创建
         if (viewHandle) {
-            if (isSystemFilePanelShow) {
+            if (isSystemFilePanelEnabled) {
                 await joplin.views.panels.show(viewHandle);
             } else {
                 await joplin.views.panels.hide(viewHandle);
@@ -161,9 +161,9 @@ export const setupWebview = async () => {
     joplin.settings.onChange(async (event) => {
         console.log('Setting changed keys:', event.keys);
         // 如果是系统文件面板的设置项变化
-        if (event.keys.includes(SYSTEM_FILE_PANEL_SHOW_TYPE_SETTING)) {
+        if (event.keys.includes(SettingKey.SYSTEM_FILE_PANEL_ENABLED)) {
             // 更新系统文件面板
-            await WebView.getInstance().initSystemFilePanel();
+            WebView.getInstance().initSystemFilePanel();
         }
     });
 };

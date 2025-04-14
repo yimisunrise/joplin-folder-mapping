@@ -2,7 +2,7 @@ import joplin from 'api';
 import { MenuItemLocation } from 'api/types';
 import { Commands, setupCommands } from './commands';
 import { setupSettings } from './settings';
-import { setupWebview } from './webView';
+import { setupWebview } from './webview';
 
 
 joplin.plugins.register({

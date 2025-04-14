@@ -1,9 +1,10 @@
 import joplin from 'api';
 import { JoplinFolderUtils, SystemUtils, JoplinDataUtils } from './utils';
 import { FolderMappingData, JoplinFolder, SystemFolder, jsonToFolderMappingData } from './dto/folderMappingData';
-import { WebView } from './webView';
+import { WebView } from './webview';
 import * as path from 'path';
-import { getJoplinSettingValue, SYSTEM_FOLDER_ROOT_PATH } from './settings';
+import { getSettingValue } from './settings';
+import { SettingKey } from './types';
 
 /**
  * 命令项
@@ -57,7 +58,7 @@ const MENU_ITEM_COMMANDS = [
             const folderId = selectedFolder ? selectedFolder.id : null;
             if (folderId) {
                 // 获取设置中的默认根路径
-                const systemFolderRootPath = await getJoplinSettingValue(SYSTEM_FOLDER_ROOT_PATH);
+                const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
                 // 通过目录ID获取目录路径
                 const folderPath = await JoplinFolderUtils.getFolderPath(folderId);
                 // 拼接系统目录路径
@@ -76,7 +77,7 @@ const MENU_ITEM_COMMANDS = [
         label: '同步目录结构',
         execute: async () => {
             // 获取设置中的默认根路径
-            const systemFolderRootPath = await getJoplinSettingValue(SYSTEM_FOLDER_ROOT_PATH);
+            const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
             // 数据存储对象
             const folderMappingData: FolderMappingData = new FolderMappingData(systemFolderRootPath, [], []);
             // 获取所有Joplin的目录

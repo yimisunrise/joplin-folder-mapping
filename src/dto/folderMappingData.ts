@@ -61,6 +61,7 @@ export class SystemFile {
   public id: string;
   public type: string;
   public size: number;
+  public isHidden: boolean;
   constructor(
     public name: string,
     public path: string,

@@ -132,12 +132,39 @@ export class SystemUtils {
             const items = fs.readdirSync(dirPath, { withFileTypes: true });
             const files: SystemFile[] = [];
             for (const item of items) {
-                files.push(new SystemFile(item.name, path.join(dirPath, item.name), item.isDirectory()));
+                const file = new SystemFile(item.name, path.join(dirPath, item.name), item.isDirectory());
+                file.isHidden = await this.isHiddenFile(file.path);
+                files.push(file);
             }
             return files;
         } catch (error) {
             console.error('Error reading system files:', error);
             return [];
+        }
+    }
+
+    /**
+     * 判断文件是否隐藏
+     * @param filePath - 文件路径
+     * @description 判断文件是否隐藏
+     * @returns 
+     */
+    private static async isHiddenFile(filePath: string): Promise<boolean> {
+        try {
+            const stats = fs.statSync(filePath);
+            if (process.platform === 'win32') {
+                // Windows: Check if the file has the hidden attribute
+                return (stats.mode & 0o200000) !== 0;
+            } else if (process.platform === 'darwin' || process.platform === 'linux') {
+                // macOS/Linux: Check if the file name starts with a dot
+                return path.basename(filePath).startsWith('.');
+            } else {
+                // Default to not hidden for unsupported platforms
+                return false;
+            }
+        } catch (error) {
+            console.error('Error checking if file is hidden:', error);
+            return false;
         }
     }
 

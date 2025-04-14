@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { SystemFile } from '../dto/folderMappingData';
-import { JoplinMessageEvent, WebviewMessageEvent } from '../webViewTypes';
+import { SettingKey } from '../types';
+import { JoplinMessageEvent, WebviewMessageEvent } from '../webviewTypes';
 
 const SystemFileList: React.FC = () => {
     const [ systemFiles, setSystemFiles ] = React.useState<SystemFile[]>([]);
-    const [ panaleHeight, setPanaleHeight ] = React.useState<string>('500px');
+    const [ settings, setSettings ] = React.useState<Record<string, any>>({});
     useEffect(() => {
         // 监听Joplin发送的消息
         webviewApi.onMessage((payload: any) => {
@@ -13,9 +14,9 @@ const SystemFileList: React.FC = () => {
                 setSystemFiles(payload.message.data);
             }
         });
-        // 获取面板高度
-        webviewApi.postMessage({ event: WebviewMessageEvent.GET_FILE_PANEL_HEIGHT}).then((height: string) => {
-            setPanaleHeight(height);
+        // 获取面板设置项
+        webviewApi.postMessage({ event: WebviewMessageEvent.GET_FILE_PANEL_SETTINGS}).then((settings: Record<string, any>) => {
+            setSettings(settings);
         });
     }, []);
 
@@ -29,6 +30,17 @@ const SystemFileList: React.FC = () => {
         webviewApi.postMessage({ event: WebviewMessageEvent.OPEN_SELECTED_FOLDER});
     };
 
+    const renderSystemFileListItem = (file: SystemFile, index: number) => {
+        if (!file || (settings[SettingKey.SYSTEM_FILE_PANEL_IS_SHOW_HIDDEN_FILES] === false && file.isHidden)) {
+            return;
+        }
+        return (
+            <li key={index} onDoubleClick={() => { openFileClick(file) }}>
+                <span>{file.name}</span>
+            </li>
+        );
+    }
+
     const renderSystemFileList = () => {
         if (!systemFiles || systemFiles.length === 0) {
             return (
@@ -38,11 +50,9 @@ const SystemFileList: React.FC = () => {
             );
         }
         return (
-            <ul style={{ height: panaleHeight }}>
+            <ul style={{ height: settings[SettingKey.SYSTEM_FILE_PANEL_HEIGHT_SETTING] + 'px' }}>
                 {systemFiles.map((file: SystemFile, index: number) => (
-                    <li key={index} onDoubleClick={() => { openFileClick(file) }}>
-                        <span>{file.name}</span>
-                    </li>
+                    renderSystemFileListItem(file, index)
                 ))}
             </ul>
         );
