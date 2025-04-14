@@ -98,33 +98,7 @@ export class WebView {
             await joplin.views.panels.addScript(viewHandle, this.viewCssPath);
             await joplin.views.panels.addScript(viewHandle, this.viewJsPath);
             await joplin.workspace.onNoteSelectionChange(async () => {
-                const isSystemFilePanelShow = await joplin.views.panels.isActive(this.viewHandles[WebViewID.SYSTEM_FILE_PANEL]);
-                if (isSystemFilePanelShow) {
-                    // 获取笔记所在的目录
-                    const folder = await joplin.workspace.selectedFolder();
-                    if (folder) {
-                        console.info('Current note folder:', folder.title);
-                        JoplinFolderUtils.getFolderPath(folder.id).then(async (path) => {
-                            // eslint-disable-next-line no-console
-                            console.info('Current note folder path:', path);
-                            // 获取设置中的默认根路径
-                            const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
-                            // 在这里可以执行打开系统文件夹的操作
-                            const files = await SystemUtils.getFiles(systemFolderRootPath + path);
-                            // eslint-disable-next-line no-console
-                            console.info('Files in system folder:', files);
-                            // 发送数据到面板
-                            await joplin.views.panels.postMessage(WebView.getInstance().viewHandles[WebViewID.SYSTEM_FILE_PANEL], {
-                                event: JoplinMessageEvent.SYSTEM_FILES,
-                                data: files,
-                            });
-            
-                        }).catch((error) => {
-                            // eslint-disable-next-line no-console
-                            console.error('Error fetching folder path:', error);
-                        });
-                    }
-                }
+                await this.sendSystemFilePanelData();
             });
             // 显示面板
             await joplin.views.panels.show(viewHandle);
@@ -136,6 +110,33 @@ export class WebView {
                 await joplin.views.panels.show(viewHandle);
             } else {
                 await joplin.views.panels.hide(viewHandle);
+            }
+        }
+    }
+
+    /**
+     * 发送当前选中的笔记本对应系统文件夹的文件列表
+     */
+    public async sendSystemFilePanelData(): Promise<void> {
+        const isSystemFilePanelShow = await joplin.views.panels.isActive(this.viewHandles[WebViewID.SYSTEM_FILE_PANEL]);
+        if (isSystemFilePanelShow) {
+            // 获取笔记所在的目录
+            const folder = await joplin.workspace.selectedFolder();
+            if (folder) {
+                JoplinFolderUtils.getFolderPath(folder.id).then(async (path) => {
+                    // 获取设置中的默认根路径
+                    const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
+                    // 在这里可以执行打开系统文件夹的操作
+                    const files = await SystemUtils.getFiles(systemFolderRootPath + path);
+                    // 发送数据到面板
+                    await joplin.views.panels.postMessage(WebView.getInstance().viewHandles[WebViewID.SYSTEM_FILE_PANEL], {
+                        event: JoplinMessageEvent.SYSTEM_FILES,
+                        data: files,
+                    });
+                }).catch((error) => {
+                    // eslint-disable-next-line no-console
+                    console.error('Error fetching folder path:', error);
+                });
             }
         }
     }
@@ -159,10 +160,8 @@ export const setupWebview = async () => {
     }, 100);
     // 监听设置项变化
     joplin.settings.onChange(async (event) => {
-        console.log('Setting changed keys:', event.keys);
-        // 如果是系统文件面板的设置项变化
+        // 如果是系统文件面板的启用设置变化
         if (event.keys.includes(SettingKey.SYSTEM_FILE_PANEL_ENABLED)) {
-            // 更新系统文件面板
             WebView.getInstance().initSystemFilePanel();
         }
     });

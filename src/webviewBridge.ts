@@ -8,6 +8,9 @@ function webviewBridge(instence: WebView) {
             case WebviewMessageEvent.GET_FILE_PANEL_SETTINGS:
                 // 获取系统文件面板设置
                 return instence.getSystemFilePanelSettings();
+            case WebviewMessageEvent.NOTIFICATION_UPDATE_SYSTEM_FILES:
+                // 发送系统文件列表数据
+                return instence.sendSystemFilePanelData();
             case WebviewMessageEvent.OPEN_FILE:
                 // 打开文件
                 return instence.systemUtils.openFileOrFolder(request.data);

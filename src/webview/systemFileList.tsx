@@ -18,6 +18,8 @@ const SystemFileList: React.FC = () => {
         webviewApi.postMessage({ event: WebviewMessageEvent.GET_FILE_PANEL_SETTINGS}).then((settings: Record<string, any>) => {
             setSettings(settings);
         });
+        // 通知更新面板列表数据
+        webviewApi.postMessage({ event: WebviewMessageEvent.NOTIFICATION_UPDATE_SYSTEM_FILES});
     }, []);
 
     // 打开点击的文件

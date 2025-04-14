@@ -23,4 +23,5 @@ export enum WebviewMessageEvent {
     OPEN_FILE = 'openFile',
     OPEN_SELECTED_FOLDER = 'openSelectedFolder',
     GET_FILE_PANEL_SETTINGS = 'getFilePanelSettings',
+    NOTIFICATION_UPDATE_SYSTEM_FILES = 'notificationUpdateSystemFiles',
 }
