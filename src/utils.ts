@@ -2,7 +2,7 @@ import joplin from 'api';
 import * as fs from 'fs';
 import * as path from 'path';
 import { exec } from 'child_process';
-import { SystemFile } from './dto/folderMappingData';
+import { SystemFile } from './entitys';
 
 /**
  * Joplin目录工具类

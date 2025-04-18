@@ -19,7 +19,7 @@ export class WebView {
         [WebViewID.COMPARE_DIALOG]: null as ViewHandle | null,
     };
 
-    private viewCssPath: string = './webview/style.css';
+    private viewCssPath: string = './webview/index.css';
     private viewJsPath: string = './main.js';
 
     /**

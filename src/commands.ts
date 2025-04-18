@@ -1,6 +1,6 @@
 import joplin from 'api';
 import { JoplinFolderUtils, SystemUtils, JoplinDataUtils } from './utils';
-import { FolderMappingData, JoplinFolder, SystemFolder, jsonToFolderMappingData } from './dto/folderMappingData';
+import { FolderMappingData, JoplinFolder, SystemFolder, jsonToFolderMappingData } from './entitys';
 import { WebView } from './webview';
 import * as path from 'path';
 import { getSettingValue } from './settings';

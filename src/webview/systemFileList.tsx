@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { SystemFile } from '../dto/folderMappingData';
+import { SystemFile } from '../entitys';
 import { SettingKey } from '../types';
 import { JoplinMessageEvent, WebviewMessageEvent } from '../webviewTypes';
 
