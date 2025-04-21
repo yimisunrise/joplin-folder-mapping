@@ -38,6 +38,15 @@ export const SETTINGS = {
     section: SECTION_NAME,
     description: "系统文件面板高度, 根据自己需求情况进行调整，单位为px",
   },
+  [SettingKey.SYSTEM_FILE_PANEL_MENU_ITEMS]: {
+    label: '系统文件面板菜单项',
+    type: SettingItemType.String,
+    public: true,
+    value: 'OPEN_FILE,COPY_NAME,COPY_PATH,CREATE_NOTEBOOK',
+    section: SECTION_NAME,
+    advanced: true,
+    description: "系统文件面板右键菜单项，支持的菜单项有：OPEN_FILE(打开文件), COPY_NAME(复制名称), COPY_PATH(复制路径), MODIFY_NAME(修改名称), MOVE_PATH(移动路径), CREATE_NOTEBOOK(创建笔记本)，若不需要某个菜单项可以删除，注意：菜单项之间用英文逗号分隔，不能有空格",  
+  },
 };
 
 /**

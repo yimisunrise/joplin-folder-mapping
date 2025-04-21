@@ -17,6 +17,10 @@ function webviewBridge(instence: WebView) {
             case WebviewMessageEvent.OPEN_SELECTED_FOLDER:
                 // 打开当前选中的笔记本对应的系统文件夹
                 return instence.executeCommand(Commands.OPEN_SYSTEM_FOLDER_BY_SELECTED);
+            case WebviewMessageEvent.CREATE_NOTEBOOK_AT_CURRENT_NOTEBOOK:
+                console.log("创建笔记本:", request.data);
+                // 创建笔记本
+                return instence.executeCommand(Commands.CREATE_NOTEBOOK_AT_CURRENT_NOTEBOOK, request.data);
             default:
                 break;
         }

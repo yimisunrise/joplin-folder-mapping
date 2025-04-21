@@ -63,7 +63,7 @@ export class SystemFile {
   public size: number;
   public isHidden: boolean;
   constructor(
-    public name: string,
+    public title: string,
     public path: string,
     public isDirectory: boolean
   ){}

@@ -32,6 +32,11 @@ export enum Commands {
     OPEN_FOLDER_COMPARE_DIALOG = "FolderMapping_OpenFolderCompareDialog",
 
     /**
+     * 在当前笔记本下创建笔记本
+     */
+    CREATE_NOTEBOOK_AT_CURRENT_NOTEBOOK = "FolderMapping_CreateNotebookAtCurrentNotebook",
+
+    /**
      * 测试
      */
     TEST = "FolderMapping_Test",
@@ -121,6 +126,22 @@ const MENU_ITEM_COMMANDS = [
             JoplinDataUtils.saveData(folderMappingData);
             // 打开窗口
             WebView.getInstance().openDialog();
+        },
+    },
+    {
+        name: Commands.CREATE_NOTEBOOK_AT_CURRENT_NOTEBOOK,
+        label: '创建笔记本',
+        execute: async (data: any) => {
+            // 获取笔记所在的目录
+            const folder = await joplin.workspace.selectedFolder();
+            if (folder) {
+                await joplin.data.post(['folders'], null, {
+                    title: data.title,
+                    parent_id: folder.id,
+                });
+            } else {
+                console.info('No folder selected');
+            }
         },
     },
     {

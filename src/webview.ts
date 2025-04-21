@@ -35,7 +35,11 @@ export class WebView {
      * @returns 系统文件面板设置
      */
     public getSystemFilePanelSettings = async (): Promise<Record<string, any>> => {
-        const settings = await getSettingValues([SettingKey.SYSTEM_FILE_PANEL_HEIGHT_SETTING, SettingKey.SYSTEM_FILE_PANEL_IS_SHOW_HIDDEN_FILES]);
+        const settings = await getSettingValues([
+            SettingKey.SYSTEM_FILE_PANEL_HEIGHT_SETTING, 
+            SettingKey.SYSTEM_FILE_PANEL_IS_SHOW_HIDDEN_FILES,
+            SettingKey.SYSTEM_FILE_PANEL_MENU_ITEMS
+        ]);
         return settings;
     }
 

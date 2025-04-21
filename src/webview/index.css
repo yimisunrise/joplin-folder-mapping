@@ -212,3 +212,25 @@
 .system-file-list ul li:hover {
     background-color: var(--joplin-background-color-hover3);
 }
+
+.popup-menu-panel {
+    width: 100px;
+    z-index: 1000;
+    position: fixed;
+    background-color: var(--joplin-background-color);
+    border-radius: 8px;
+    padding: 10px 0;
+    border: 1px solid var(--joplin-divider-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popup-menu-panel .menu-item {
+    padding: 5px 10px;
+    color: var(--joplin-color);
+    font-size: var(--joplin-font-size);
+    line-height: var(--joplin-line-height);
+}
+
+.popup-menu-panel .menu-item:hover {
+    background-color: var(--joplin-code-background-color);
+}
