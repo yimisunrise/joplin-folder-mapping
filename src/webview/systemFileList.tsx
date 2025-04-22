@@ -73,6 +73,11 @@ const SystemFileList: React.FC = () => {
         webviewApi.postMessage({ event: WebviewMessageEvent.OPEN_SELECTED_FOLDER});
     };
 
+    // 刷新当前选中的笔记本对应的系统文件夹
+    const updateFolderClick = () => {
+        webviewApi.postMessage({ event: WebviewMessageEvent.NOTIFICATION_UPDATE_SYSTEM_FILES});
+    };
+
     // 事件
     const handlePopupMenu =(event:any, file: SystemFile) =>{
         // 右键菜单选择的文件
@@ -142,7 +147,7 @@ const SystemFileList: React.FC = () => {
         );
     }
 
-    const renderMenuPanel = () => {
+    const renderMenuPanelPopup = () => {
         if (showPopupMenu) {
             return (
                 <div className='popup-menu-panel' style={rightStyle} onMouseLeave={() => { setShowPopupMenu(false) }} ref={contextMenu}>
@@ -164,10 +169,13 @@ const SystemFileList: React.FC = () => {
             <div className='header'>
                 <span>系统文件</span>
                 <span className='help-tips' data-tips='双击列表中文件名打开文件'>?</span>
-                <i onClick={() => {openFolderClick()}}>打开</i>
+                <span className='right-btns'>
+                    <i className='icon-update' title='刷新列表' onClick={() => {updateFolderClick()}} ></i>
+                    <i className='icon-forward' title='打开目录' onClick={() => {openFolderClick()}} ></i>
+                </span>
             </div>
             {renderSystemFileList()}
-            {renderMenuPanel()}
+            {renderMenuPanelPopup()}
         </div>
     );
 };

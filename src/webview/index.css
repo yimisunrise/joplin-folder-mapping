@@ -165,22 +165,25 @@
     padding: 10px 10px;
     border-bottom: 1px solid var(--joplin-divider-color);
     font-weight: bold;
-    line-height: 13px;
+    line-height: 14px;
 }
 
 .system-file-list .header span {
     color: var(--joplin-color3);
-    font-size: 13px;
+    font-size: 14px;
 }
 
-.system-file-list .header i {
-    position: fixed;
+.system-file-list .header .right-btns {
+    position: absolute;
     right: 0;
-    margin-right: 10px;
-    color: gray;
+    margin-right: 5px;
 }
 
-.system-file-list .header i:hover {
+.system-file-list .header .right-btns i {
+    margin-right: 5px;
+}
+
+.system-file-list .header .right-btns i:hover {
     color: var(--joplin-color4);
     cursor: pointer;
 }
