@@ -210,10 +210,15 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: var(--joplin-font-size);
 }
 
 .system-file-list ul li:hover {
     background-color: var(--joplin-background-color-hover3);
+}
+
+.system-file-list ul li i{
+    margin-right: 4px;
 }
 
 .popup-menu-panel {
