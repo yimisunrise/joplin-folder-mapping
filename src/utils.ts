@@ -133,7 +133,10 @@ export class SystemUtils {
             const files: SystemFile[] = [];
             for (const item of items) {
                 const file = new SystemFile(item.name, path.join(dirPath, item.name), item.isDirectory());
+                // 获取文件是否隐藏文件
                 file.isHidden = await this.isHiddenFile(file.path);
+                // 获取文件夹的子文件数量
+                file.childrenCount = item.isDirectory() ? fs.readdirSync(file.path).length : 0;
                 files.push(file);
             }
             return files;

@@ -119,6 +119,7 @@ const SystemFileList: React.FC = () => {
             <li key={index} onDoubleClick={() => { openFileClick(file) }} onContextMenu={(e) => { handlePopupMenu(e, file) }}>
                 <i className={file.isDirectory ? 'icon-notebooks' : 'icon-notes'}></i>
                 <span>{file.title}</span>
+                { file.isDirectory && <span className='number'>{file.childrenCount}</span> }
             </li>
         );
     }

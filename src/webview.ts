@@ -130,7 +130,7 @@ export class WebView {
                 JoplinFolderUtils.getFolderPath(folder.id).then(async (path) => {
                     // 获取设置中的默认根路径
                     const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
-                    // 在这里可以执行打开系统文件夹的操作
+                    // 获取系统文件列表
                     const files = await SystemUtils.getFiles(systemFolderRootPath + path);
                     // 发送数据到面板
                     await joplin.views.panels.postMessage(WebView.getInstance().viewHandles[WebViewID.SYSTEM_FILE_PANEL], {

@@ -203,6 +203,7 @@
 }
 
 .system-file-list ul li {
+    position: relative;
     padding: 0 10px;
     height: 34px;
     line-height: 34px;
@@ -219,6 +220,20 @@
 
 .system-file-list ul li i{
     margin-right: 4px;
+}
+
+.system-file-list ul li span.number{
+    position: absolute;
+    right: 5px;
+    top: 11px;
+    width: calc(var(--joplin-font-size) + 2px);
+    height: calc(var(--joplin-font-size) + 2px);
+    background-color: var(--joplin-background-color3);
+    color: var(--joplin-color3);
+    border-radius: 50%;
+    text-align: center;
+    font-size: var(--joplin-font-size);
+    line-height: calc(var(--joplin-font-size) + 2px);
 }
 
 .popup-menu-panel {
