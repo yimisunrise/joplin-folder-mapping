@@ -100,7 +100,6 @@ dist
 
 # vuepress v2.x temp and cache directory
 .temp
-.cache
 
 # Docusaurus cache and generated files
 .docusaurus
@@ -155,7 +154,6 @@ Thumbs.db
 # Backup files
 *.bak
 *.backup
-*~
 
 # Archive files (except for documentation assets)
 *.zip
