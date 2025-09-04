@@ -122,26 +122,23 @@ export class WebView {
      * 发送当前选中的笔记本对应系统文件夹的文件列表
      */
     public async sendSystemFilePanelData(): Promise<void> {
-        const isSystemFilePanelShow = await joplin.views.panels.isActive(this.viewHandles[WebViewID.SYSTEM_FILE_PANEL]);
-        if (isSystemFilePanelShow) {
-            // 获取笔记所在的目录
-            const folder = await joplin.workspace.selectedFolder();
-            if (folder) {
-                JoplinFolderUtils.getFolderPath(folder.id).then(async (path) => {
-                    // 获取设置中的默认根路径
-                    const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
-                    // 获取系统文件列表
-                    const files = await SystemUtils.getFiles(systemFolderRootPath + path);
-                    // 发送数据到面板
-                    await joplin.views.panels.postMessage(WebView.getInstance().viewHandles[WebViewID.SYSTEM_FILE_PANEL], {
-                        event: JoplinMessageEvent.SYSTEM_FILES,
-                        data: files,
-                    });
-                }).catch((error) => {
-                    // eslint-disable-next-line no-console
-                    console.error('Error fetching folder path:', error);
+        // 获取笔记所在的目录
+        const folder = await joplin.workspace.selectedFolder();
+        if (folder) {
+            JoplinFolderUtils.getFolderPath(folder.id).then(async (path) => {
+                // 获取设置中的默认根路径
+                const systemFolderRootPath = await getSettingValue(SettingKey.SYSTEM_FOLDER_ROOT_PATH);
+                // 获取系统文件列表
+                const files = await SystemUtils.getFiles(systemFolderRootPath + path);
+                // 发送数据到面板
+                await joplin.views.panels.postMessage(WebView.getInstance().viewHandles[WebViewID.SYSTEM_FILE_PANEL], {
+                    event: JoplinMessageEvent.SYSTEM_FILES,
+                    data: files,
                 });
-            }
+            }).catch((error) => {
+                // eslint-disable-next-line no-console
+                console.error('Error fetching folder path:', error);
+            });
         }
     }
 
